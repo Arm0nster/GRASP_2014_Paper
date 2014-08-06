@@ -1,7 +1,7 @@
 \section{Head Mounted Display}
 \label{sec:hmd}
 
-\begin{figure}[!b]
+\begin{figure}[]
 \centering
 \includegraphics[width=0.5\textwidth]{oculus.jpg}
 \caption{Oculus Rift Development Kit 1. 
@@ -11,37 +11,66 @@
 
 \begin{figure}[]
 \centering
-\includegraphics[width=0.5\textwidth]{stereoscopic.jpg}
-\caption{A stereoscopic split screen view also rendered with barrel distortion.
-Frames displayed on the Oculus screen appear normal.}
+\includegraphics[width=0.5\textwidth]{stereo_lens.png}
+\caption{Above is a stereoscopic split screen view also rendered with barrel distortion.
+    Below, are the magnifying lenses of the oculus headset.
+Frames displayed on the Oculus screen appear normal when the headset is worn.}
 \label{fig:stereo}
 \end{figure}
 
-Since the Oculus Rift seen in Fig. \ref{fig:oculus} is the current state of the
-art in HMD VR technology, it is a natural choice as the cornerstone for
-graphical immersion in our system. The most simple applications one can develop
-for the Oculus are created using basic OpenGL. The only caveat being that a
-separate framebuffer must be bound to the context for off-screen rendering. The
-framebuffer must have a texture bound to at as well which will be written to at
-the last stage of the conventional pipeline. Parameters for constructing the
-texture are provided directly from the Oculus SDK programatically.  The Oculus
-SDK will then take the data placed in the texture and perform the
-post-processing for stereoscopic 3D rendering and distortion processing. The
-Oculus Rift requires a scene to be rendered in split-screen stereo. The left
-eye sees the left half of the screen and the right eye sees the right half.
+
+The Oculus Rift seen in Fig. \ref{fig:oculus} is the current state of the art
+in HMD VR technology. There are several elements to the device that allow the
+Oculus to provide the most immersive visual VR experience thus seen.
+
+The first is speed.  The VR realism is directly tied to this response time and
+the Oculus overcomes the problem of graphical latency, which has plagued all of
+its predecessors, by sampling data from its 3-axis gyro, accelerometers, and
+magnetometers at a rate of 250Hz \cite{website:roadtovr}; the newer version is
+said to have a sampling rate of 1000Hz. Its ability to gather data so quickly
+from its propriocetive sensors allows the graphics on the display to be
+adjusted to correspond to real time head movements. Secondly, the Oculus
+renders scenes split screen stereoscopic 3D. The left eye sees the left half of
+the screen and the right eye sees the right half, which is consistent with
+human perception. Leveraging split screen stereo greatly enhances the perceived
+3D effect. Finally, the Oculus uses large magnifying lenses in order to
+completely encompass the user's peripheral vision and greatly expand field of
+view. All of these aspects must be considered when developing the graphics of
+the scene. Fortunately the SDK provides sufficient overhead to deal with them,
+allowing graphics developers to stay focused on developing graphics instead of
+worrying about the details of implementation.
+
+The most simple applications one can develop for the Oculus are created using
+basic OpenGL. The only caveat being that a separate framebuffer must be bound
+to the context for off-screen rendering. The framebuffer must have a texture
+bound to at as well which will be written to at the last stage of the
+conventional pipeline. Parameters for constructing the texture are provided
+directly from the Oculus SDK programmatically. The Oculus SDK will then take the
+data placed in the texture and perform the post-processing for stereoscopic 3D
+rendering and distortion processing. 
+
 Human eye pupils are approximately 65 mm apart.  This interpupillary distance
 (IPD) must be taken into consideration for configuring the in-application
-camera.  Therefore, each scene is rendered twice, once for the virtual camera
+camera. Therefore, each scene is rendered twice, once for the virtual camera
 on the left, and once for the virtual camera on the right. Both of which are
 subject to a translation with respect to one another causing the stereoscopic
-effect. The lenses in the Oculus provide a large degree of magnification in
-order to provide a wide field of view so as to enhance immersion. However, as a
-result the image succumbs to a great deal of pincushion distortion. To rectify
-this distortion, the software must apply an equal and opposite amount of barrel
-distortion. The final image rendered to the Oculus's display can be seen in
-Fig. \ref{fig:stereo}. For the remainder of this paper, when discussing the
-camera view, this refers to the single camera model provided to the Oculus SDK
-before the post processing occurs. 
+effect. 
+
+The use of the large magnifying lenses causes the image succumbs to a great
+deal of pincushion distortion. To rectify this distortion, the software must
+apply an equal and opposite amount of barrel distortion. The final image
+rendered to the Oculus's display can be seen in Fig. \ref{fig:stereo}. For the
+remainder of this paper, when discussing the camera view, this refers to the
+single camera model provided to the Oculus SDK before the post processing
+occurs. 
+
+However, the Oculus is not without limitations. While it is able to track
+rotation effectively, it provides no means of tracking translation. Those
+familiar with the company should find themselves critical, as they know that
+the newer version of the Oculus does provides position tracking as well. Be
+that as it may, its position tracking is limited as it is designed to track
+within a small volumes, say the space in front of a desk. In addition, it
+provides not ability track any other objects other than itself.
 
 Graphics is known as the inverse problem to computer vision. Where computer
 vision seeks to extract information about an environment from an image,
@@ -49,19 +78,24 @@ graphics seeks to extract information to construct an image from an
 environment. What gives computer graphics the illusion of position and depth is
 a mathematical process of constructing a series of transformations taking
 arbitrary points from one frame of reference to another to infer position and
-ultimately a projective transform to infer depth. The location of all 
-the particles in an object can be defined with respect to some inertial frame
-of reference. If one observes the object from some alternative location and
-orientation with respect to the same intertial frame, one can construct a 
-transformation to take points from the inertial frame to the view frame. This
-is already well understood by many who have experience with 3D graphics
+ultimately a projective transform to infer depth. The location of all the
+particles in an object can be defined with respect to some inertial frame of
+reference. If one observes the object from some alternative location and
+orientation with respect to the same inertial frame, one can construct a
+transformation to take points from the inertial frame to the view frame.
+Ultimately, all the objects in the scene must be transformed from their own
+respective frames of reference to this view frame. Manipulating the pose of
+this view frame is what we are interested in. Normally, the orientation of
+the Oculus is constructed from the measurements provided by its sensors,
+and is used directly as the orientation of the view frame.
 
-% Fix the orientation of the axis to reflect graphical frame
-% \begin{figure}[b!]
-% \centering
-% \includegraphics[width=0.5\textwidth]{world_view.png}
-% \caption{Two frames of reference, the view and the world. The orienation and
-% position of the view frame corresponds to the camera view.}
-% \label{fig:worldview}
-% \end{figure}
+\begin{figure}[]
+\centering
+\includegraphics[width=0.5\textwidth]{world_view.png}
+\caption{Two frames of reference, the view and the world. The orientation and
+position of the view frame corresponds to the camera view. The axis are
+defined in the graphics convention. Red is \emph{x}, green is \emph{y}, 
+and blue is \emph{z}.}
+\label{fig:worldview}
+\end{figure}
 
