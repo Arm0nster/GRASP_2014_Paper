@@ -41,13 +41,13 @@ allowing graphics developers to stay focused on developing graphics instead of
 worrying about the details of implementation.
 
 The most simple applications one can develop for the Oculus are created using
-basic OpenGL. The only caveat being that a separate framebuffer must be bound
-to the context for off-screen rendering. The framebuffer must have a texture
-bound to at as well which will be written to at the last stage of the
-conventional pipeline. Parameters for constructing the texture are provided
-directly from the Oculus SDK programmatically. The Oculus SDK will then take the
-data placed in the texture and perform the post-processing for stereoscopic 3D
-rendering and distortion processing. 
+basic OpenGL \cite{website:opengl}. The only caveat being that a separate
+framebuffer must be bound to the context for off-screen rendering. The
+framebuffer must have a texture bound to at as well which will be written to at
+the last stage of the conventional pipeline. Parameters for constructing the
+texture are provided directly from the Oculus SDK programmatically. The Oculus
+SDK will then take the data placed in the texture and perform the
+post-processing for stereoscopic 3D rendering and distortion processing. 
 
 Human eye pupils are approximately 65 mm apart.  This interpupillary distance
 (IPD) must be taken into consideration for configuring the in-application
@@ -74,25 +74,41 @@ provides not ability track any other objects other than itself.
 
 Graphics is known as the inverse problem to computer vision. Where computer
 vision seeks to extract information about an environment from an image,
-graphics seeks to extract information to construct an image from an
-environment. What gives computer graphics the illusion of position and depth is
-a mathematical process of constructing a series of transformations taking
+graphics seeks to extract information from an environment to construct an
+image. What gives computer graphics the illusion of position and depth is a
+mathematical process of constructing a series of transformations taking
 arbitrary points from one frame of reference to another to infer position and
 ultimately a projective transform to infer depth. The location of all the
-particles in an object can be defined with respect to some inertial frame of
-reference. If one observes the object from some alternative location and
-orientation with respect to the same inertial frame, one can construct a
-transformation to take points from the inertial frame to the view frame.
+particles in an object can be defined with respect to some frame of reference
+usually referred to as the model. If one observes the object from some
+alternative location and orientation with respect to the model frame, one can
+construct a transformation to take points from the model frame to the view
+frame.
+
+\[
+\begin{pmatrix} x \\ y \\ z \\ 1 \end{pmatrix}^{view} = 
+    \begin{pmatrix}
+        r_{1} & r_{2} & r_{3} & t_{x} \\
+        r_{4} & r_{5} & r_{6} & t_{y} \\
+        r_{7} & r_{8} & r_{9} & t_{z} \\
+        0 & 0 & 0 & 1
+    \end{pmatrix}^{view}_{model}
+    \times
+\begin{pmatrix} x \\ y \\ z \\ 1 \end{pmatrix}^{model}
+\]
+
+
+
 Ultimately, all the objects in the scene must be transformed from their own
 respective frames of reference to this view frame. Manipulating the pose of
-this view frame is what we are interested in. Normally, the orientation of
+this view frame is what I am interested in. Normally, the orientation of
 the Oculus is constructed from the measurements provided by its sensors,
 and is used directly as the orientation of the view frame.
 
 \begin{figure}[]
 \centering
-\includegraphics[width=0.5\textwidth]{world_view.png}
-\caption{Two frames of reference, the view and the world. The orientation and
+\includegraphics[width=0.5\textwidth]{view_model.png}
+\caption{Two frames of reference, the view and the model. The orientation and
 position of the view frame corresponds to the camera view. The axis are
 defined in the graphics convention. Red is \emph{x}, green is \emph{y}, 
 and blue is \emph{z}.}

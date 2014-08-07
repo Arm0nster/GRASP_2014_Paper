@@ -1,5 +1,6 @@
 \documentclass{IEEEtran}
 \usepackage{graphicx}
+\usepackage{amsmath}
 
 \graphicspath{{./figures/}}
 
@@ -8,7 +9,10 @@
 % \title{General Platform for Interactive Graphics Manipulation with Haptic Feedback via Large Scale Motion Capture}
 \title{A General Platform for Immersive Virtual Reality and Interactive Manipulation with Haptic Feedback via Motion Capture}
 
-\author{Armon Shariati, Camillo Jose Taylor}
+\author{
+    \IEEEauthorblockN{Armon Shariati} \\
+\IEEEauthorblockA{Lehigh University \\ University of Pennsylvania}
+}
 
 \begin{document}
 \setlength{\pdfpagewidth}{8.5in}
@@ -18,7 +22,7 @@
 \begin{abstract}
     Most virtual reality systems generally fall into one of two categories:
     graphics oriented - which focus on developing immersive environments but
-    generally fail to provide users with a strong sense of interactivty - and
+    generally fail to provide users with a strong sense of interactity - and
     haptics oriented - which focus on constructing tools for touch-based
     manipulation and auditory interaction but tend to be very specialized
     applications and tightly bound device ecosystems. We present our approach
@@ -28,6 +32,17 @@
 
 \input{./sections/introduction}
 \input{./sections/hmd}
+\input{./sections/mocap}
+\input{./sections/results}
+\input{./sections/future}
+
+\section{Acknowledgements}
+I would like to thank Rahul Mangharam for generously providing many of the
+resources necessary for building the system. I would especially like to thank
+my advisor Professor Camillo Jose Taylor and my graduate student mentor
+Anthony Cowley for their tutelage. Finally, I would like extend special thanks
+to Professor Katherine Kuchenbecker and Professor Max Mintz for their efforts
+to organize the REU program.
 
 \bibliographystyle{IEEEtran}
 \bibliography{IEEEabrv,bibliography}

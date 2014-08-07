@@ -1,0 +1,103 @@
+\section{Results}
+\label{sec:results}
+
+\begin{figure}[b!]
+\centering
+\includegraphics[width=0.5\textwidth]{reflection.png}
+\caption{The trajectory of the ball incurs a reflection about the normal
+vector defining the plane with which it makes contact.}
+\label{fig:reflection}
+\end{figure}
+
+The test application I use to test the merit of the platform, includes three
+major elements. It must provide an immersive graphical environment for the
+user, interactivity with the environment, and finally some degree of haptic
+feedback. The demo features a game of virtual squash. The user is placed within
+a room which approximately corresponds size to the motion capture volume - 5
+meters long, 2.5 meters wide, and 2.5 meters high. Alongside the user is a
+paddle and ball. The pose of the paddle corresponds directly to the pose of the
+Wiimote within the volume. See Figure \ref{fig:demo} for a snapshot.  When the
+virtual paddle makes contact with the ball, the Wiimote vibrates, and the
+paddle supplies the ball with an instantaneous velocity in the direction of the
+normal vector defining the face of the paddle which made contact.  As the ball
+travels, if it makes contact with any of the six faces of the bounding room or
+any of the six faces of the paddle, the velocity of the ball is subject to a
+reflection about the normal defining the face with which it made contact as
+seen in Figure \ref{fig:reflection}. 
+
+\[
+\vec{v_{2}} = \vec{v_{1}} - 2 \frac{\vec{v_{i}} \bullet \vec{n}}{\vec{n} \bullet \vec{n}} \hat{n}
+\]
+
+Until the user chooses to reset the simulation, the ball will continue to 
+bounce move about the room indefinitely.
+
+\subsection{Software Architecture}
+
+I built the application within the Robot Operating System (ROS) framework
+\cite{website:ros}. ROS is a set of software libraries and tools that provide
+``a structured communications layer above the host operating system of a
+heterogeneous computing cluster'' \cite{quigley2009ros}. A ROS node publishes
+the tracking data collected from the Vicon over a ROS topic which the main
+graphics thread listens to. The application uses the pose of the Oculus and the
+pose of the Wiimote provided by the Vicon, as the pose of the virutal camera
+and virtual paddle respectively. The Vicon would provide measurements at a rate
+of 100Hz. The graphics thread runs at an average rate of 60Hz, however, I
+notice a sharp drop periodically down to 40Hz. The drop does not seem to affect
+the rendering process greatly, but I would like to investigate the
+cause\footnote{I suspect that the issue lies within communication with the
+Wiimote. I naively placed the communication processes with the Wiimote within
+the main graphics thread instead of making it its own process.}. The use of ROS
+permits an ease of integration with many robotics platforms for teloperative
+purposes, as many robotic systems are built within the ROS framework as well.
+
+\subsection{Contact Modeling}
+
+In order to simplify contact modeling I model the paddle as a rectangle even
+though it is a rectangular prism. Therefore, two faces can really ever make
+contact with the ball. The application determines contact with any face of the
+room and the face of the paddle by continuously calculating the distance from
+the ball to every face, and uses this set of measurements to ascertain whether
+or not every point on the ball is within the bounding volume of the room and
+whether or not any of the points on the ball exist on the face of the paddle.
+Refer to Figure \ref{fig:normals} for an illustration of the different normals
+associated with each face.
+
+\[
+D = \vec{(x - p)} \bullet \hat{n}
+\]
+
+Above, $D$ is the distance between a point and a plane; $x$ and $p$ are
+the locations of a point on the plane and the point for which the calculation
+is being performed, respectively.
+\smallskip
+
+
+\begin{figure}[]
+\centering
+\includegraphics[width=0.5\textwidth]{normals.png}
+\caption{An illustration of the position and orientation of all the 
+normals defining each face.}
+\label{fig:normals}
+\end{figure}
+
+If every point on the ball is within the room, the distances between all the
+points on the ball and each face of the room should be positive. If the sign of
+any of the distances becomes negative, this indicates contact with the
+associated face. The velocity vector of the ball then undergoes a reflection
+about the normal vector affiliated with the face which makes contact.
+Similarly, to determine contact with the paddle, the application determines if
+any point on the ball has entered the bounding prism of the paddle. If so, the
+application determines which side of our simplified face model the center of
+the ball resides, and uses either the normal vector for reflection if the
+center is in front of the paddle or the negative of the normal vector if the
+center is behind the paddle.
+
+\begin{figure}[]
+\centering
+\includegraphics[width=0.5\textwidth]{demo.png}
+\caption{On the left is a single image of the environment during the simulation
+which is rendered to the Oculus; notice the ball and paddle.  On the right is
+the user interacting with the VR.}
+\label{fig:demo}
+\end{figure}

@@ -1,0 +1,75 @@
+\section{Motion Capture}
+\label{sec:mocap}
+
+\begin{figure}[]
+\centering
+\includegraphics[width=0.5\textwidth]{view_mask.png}
+\caption{On the left is a graphical representation of the Oculus with its
+tracking rig attached as well as the two different coordinate axis
+corresponding to the actual graphics view, and the mask. On the right
+is a picture of the Oculus as it is used in the system.}
+\label{fig:mask}
+\end{figure}
+
+Motion capture systems such as the Vicon system \cite{website:vicon}, which I
+chose to use in my system,  track objects through a volume by calculating 3D
+spatial displacements of a set of asymmetrically mounted markers. The markers
+reflect the infrared radiation emitted by LEDs which in turn is the only light
+that is tracked by a set of cameras which mask out all other sources of light.
+Using two or more cameras, the position of each marker can be found via
+triangulation.
+
+In order to best track the pose of the Oculus through the volume created by the
+set of 6 cameras, one needs to mount the reflective markers in such a fashion
+that they are difficult to occlude. To do so, I construct a simple lightweight
+rig from balsa wood seen in Figure \ref{fig:mask}. I refer to the coordinate
+frame associated with the rig as the mask frame. It is important to note that
+the mask frame is not the same as the view frame. If orientation of the mask
+frame was used for the orientation of the virtual camera, the displayed seen
+would be incorrect. To account for this, I build another transformation to
+take points from the mask frame to the view frame. I approximate the rotation
+with the rotation matrix below.
+
+\[
+R = \begin{pmatrix} 0 & -1 & 0 \\ 0 & 0 & 1 \\ -1 & 0 & 0 \end{pmatrix}
+\]
+
+I approximate the translation between the two frames by using a ruler to
+measure the distance from the point indicated as the center of the rig, and the
+approximate center of the Oculus' front face.
+
+Using a motion capture system to track position and rotation allows us to
+add as many extra devices to the system, provided there are a set of markers
+mounted to the device which meet the necessary criterion. For my own demo 
+I chose to use a Nintendo Wiimote seen in Figure \ref{fig:wiimote}.
+
+\begin{figure}[]
+\centering
+\includegraphics[width=0.5\textwidth]{wiimote.png}
+\caption{Above is a Nintendo Wiimote with a set of four reflective markers
+attached to its head such that it can be tracked through the motion capture
+volume}
+\label{fig:wiimote}
+\end{figure}
+
+\begin{figure}[]
+\centering
+\includegraphics[width=0.5\textwidth]{mocap.png}
+\caption{This is a representation of what the different coordinate frames
+look like in the system.}
+\label{fig:mocap}
+\end{figure}
+
+A final representation of using motion capture to track the objects can be seen
+in Figure \ref{fig:mocap}. One should note, that since now the position and
+orientation of the Oculus - and in turn the view frame - is derived from the
+Vicon, which establishes a world coordinate frame at a point defined on the
+ground, the graphics do not exist with respect to some arbitrary world frame
+defined in the graphics world, but instead they are all defined with respect to
+the origin defined by the Vicon system. Furthermore, the size and position of
+all graphical objects are no longer an arbitrary unit length, but are now
+millimeters which is the unit reported by the Vicon. This grants developers an
+extra degree of intuition because the virtual volume and all of the virtual
+objects now directly correspond to space defined in the real world.
+
+
