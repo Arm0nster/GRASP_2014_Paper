@@ -12,12 +12,12 @@ is a picture of the Oculus as it is used in the system.}
 \end{figure}
 
 Motion capture systems such as the Vicon system \cite{website:vicon}, which I
-chose to use in my system,  track objects through a volume by calculating 3D
-spatial displacements of a set of asymmetrically mounted markers. The markers
-reflect the infrared radiation emitted by LEDs which in turn is the only light
-that is tracked by a set of cameras which mask out all other sources of light.
-Using two or more cameras, the position of each marker can be found via
-triangulation.
+chose to use in the system,  track objects through a volume by calculating the
+3D spatial displacements of a set of asymmetrically mounted markers. The
+markers reflect the infrared radiation emitted by LEDs which in turn is the
+only light that a set of cameras track after all other sources of light are
+masked out. Using two or more cameras, the position of each marker can be found
+via triangulation.
 
 In order to best track the pose of the Oculus through the volume created by the
 set of 6 cameras, one needs to mount the reflective markers in such a fashion
@@ -38,10 +38,10 @@ I approximate the translation between the two frames by using a ruler to
 measure the distance from the point indicated as the center of the rig, and the
 approximate center of the Oculus' front face.
 
-Using a motion capture system to track position and rotation allows us to
-add as many extra devices to the system, provided there are a set of markers
-mounted to the device which meet the necessary criterion. For my own demo 
-I chose to use a Nintendo Wiimote seen in Figure \ref{fig:wiimote}.
+Using a motion capture system to track position and rotation allows developers
+to add as many extra devices to the system, provided there are a set of markers
+mounted to the device which meet the necessary criterion. For my own demo I
+chose to use a Nintendo Wiimote seen in Figure \ref{fig:wiimote}.
 
 \begin{figure}[]
 \centering
@@ -61,15 +61,14 @@ look like in the system.}
 \end{figure}
 
 A final representation of using motion capture to track the objects can be seen
-in Figure \ref{fig:mocap}. One should note, that since now the position and
-orientation of the Oculus - and in turn the view frame - is derived from the
-Vicon, which establishes a world coordinate frame at a point defined on the
-ground, the graphics do not exist with respect to some arbitrary world frame
+in Figure \ref{fig:mocap}. One should note, that since the position and
+orientation of the Oculus - and in turn the view frame - is now derived from
+the Vicon, the graphics do not exist with respect to some arbitrary world frame
 defined in the graphics world, but instead they are all defined with respect to
-the origin defined by the Vicon system. Furthermore, the size and position of
-all graphical objects are no longer an arbitrary unit length, but are now
-millimeters which is the unit reported by the Vicon. This grants developers an
-extra degree of intuition because the virtual volume and all of the virtual
-objects now directly correspond to space defined in the real world.
-
+the origin defined by the Vicon system. The developer may choose where to set
+the origin of the Vicon after they perform a calibration. Furthermore, the size
+and position of all graphical objects are no longer an arbitrary unit length,
+but are now millimeters, which is the unit reported by the Vicon. This grants
+developers an extra degree of intuition because the virtual volume and all of
+the virtual objects now directly correspond to space defined in the real world.
 
